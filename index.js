@@ -139,6 +139,7 @@ const main = async () => {
     // const orders = req.body.orders;
     const data = req.body;
     const result = await postOrder(client, data);
+    await updateLesson(client,data)
     res.json(result);
   });
 
@@ -219,7 +220,7 @@ const main = async () => {
       .db(database)
       .collection(ordersCollection)
       .insertOne(data);
-    await updateLesson(client,data)
+
     return result;
   }
 
@@ -240,20 +241,20 @@ const main = async () => {
         }
       }
     })
-    const lesson = await client
-      .db(database)
-      .collection(lessonsCollection)
-      .findOne({ id: lessonId });
-      console.log(lesson);
-      if(lesson){
-        while (lesson.space > 0) {
-          const result = await client
-            .db(database)
-            .collection(lessonsCollection)
-            .updateOne({ id: lessonId }, { $inc: { space: -1 } });
-          return result;
-        }
-      }
+    // const lesson = await client
+    //   .db(database)
+    //   .collection(lessonsCollection)
+    //   .findOne({ id: lessonId });
+    //   console.log(lesson);
+    //   if(lesson){
+    //     while (lesson.space > 0) {
+    //       const result = await client
+    //         .db(database)
+    //         .collection(lessonsCollection)
+    //         .updateOne({ id: lessonId }, { $inc: { space: -1 } });
+    //       return result;
+    //     }
+    //   }
     
     return "No items";
   }
