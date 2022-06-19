@@ -139,7 +139,7 @@ const main = async () => {
     // const orders = req.body.orders;
     const data = req.body;
     const result = await postOrder(client, data);
-    await updateLesson(client,data)
+    
     res.json(result);
   });
 
@@ -220,7 +220,7 @@ const main = async () => {
       .db(database)
       .collection(ordersCollection)
       .insertOne(data);
-
+    await updateLesson(client,data)
     return result;
   }
 
