@@ -216,31 +216,37 @@ const main = async () => {
   }
 
   async function postOrder(client, data) {
+    const lessons = data.cart;
+    await updateLesson(client,lessons)
     const result = await client
       .db(database)
       .collection(ordersCollection)
       .insertOne(data);
-    await updateLesson(client,data)
+  
     return result;
   }
 
   async function updateLesson(client, lessons) {
-    lessons.forEach(async(lesson)=>{
-      await client
-      .db(database)
-      .collection(lessonsCollection)
-      .findOne({ id: lesson.id });
-      console.log(lesson);
-      if(lesson){
-        while (lesson.space > 0) {
-          const result = await client
-            .db(database)
-            .collection(lessonsCollection)
-            .updateOne({ id: lesson.id }, { $inc: { space: -lesson.qty } });
-          return result;
+    if (lessons){
+      
+      lessons.forEach(async(lesson)=>{
+        await client
+        .db(database)
+        .collection(lessonsCollection)
+        .findOne({ id: lesson.id });
+        console.log(lesson);
+        if(lesson){
+          while (lesson.space > 0) {
+            const result = await client
+              .db(database)
+              .collection(lessonsCollection)
+              .updateOne({ id: lesson.id }, { $inc: { space: -lesson.qty } });
+            return result;
+          }
         }
-      }
-    })
+      })
+    }
+
     // const lesson = await client
     //   .db(database)
     //   .collection(lessonsCollection)
