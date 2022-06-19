@@ -216,8 +216,24 @@ const main = async () => {
   }
 
   async function postOrder(client, data) {
-    const lessons = data.cart;
-    await updateLesson(client,lessons)
+    const lessons = data.order;
+    lessons.forEach(async(lesson)=>{
+      const response = await client
+      .db(database)
+      .collection(lessonsCollection)
+      .findOne({ id: lesson.id });
+     
+        while (response.space > 0) {
+          const min = lesson.qty
+          const result = await client
+            .db(database)
+            .collection(lessonsCollection)
+            .updateOne({ id: lesson.id }, { $inc: { space: -min } });
+          return result;
+        }
+      
+    })
+    console.log(lessons);
     const result = await client
       .db(database)
       .collection(ordersCollection)
@@ -245,6 +261,7 @@ const main = async () => {
           }
         }
       })
+      
     }
 
     // const lesson = await client
