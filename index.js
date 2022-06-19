@@ -142,11 +142,11 @@ const main = async () => {
     res.json(result);
   });
 
-  app.put("/update-lesson", async function (req, res) {
-    const lessonId =  req.body.id;
-    const result = await updateLesson(client, lessonId);
-    res.json(result);
-  });
+  // app.put("/update-lesson", async function (req, res) {
+  //   const lessonId =  req.body.id;
+  //   const result = await updateLesson(client, lessonId);
+  //   res.json(result);
+  // });
 
   app.put("/remove-from-cart",async function (req,res){
     const lessonId = req.body.id;
@@ -219,10 +219,27 @@ const main = async () => {
       .db(database)
       .collection(ordersCollection)
       .insertOne(data);
+    await updateLesson(client,data)
     return result;
   }
 
-  async function updateLesson(client, lessonId) {
+  async function updateLesson(client, lessons) {
+    lessons.forEach((lesson)=>{
+      await client
+      .db(database)
+      .collection(lessonsCollection)
+      .findOne({ id: lesson.id });
+      console.log(lesson);
+      if(lesson){
+        while (lesson.space > 0) {
+          const result = await client
+            .db(database)
+            .collection(lessonsCollection)
+            .updateOne({ id: lesson.id }, { $inc: { space: -lesson.qty } });
+          return result;
+        }
+      }
+    })
     const lesson = await client
       .db(database)
       .collection(lessonsCollection)
