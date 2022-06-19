@@ -225,7 +225,7 @@ const main = async () => {
   }
 
   async function updateLesson(client, lessons) {
-    lessons.forEach((lesson)=>{
+    lessons.forEach(async(lesson)=>{
       await client
       .db(database)
       .collection(lessonsCollection)
